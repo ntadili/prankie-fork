@@ -26,6 +26,14 @@ export const useFormPersistence = () => {
       if (savedData) {
         const parsedData = JSON.parse(savedData);
         
+        // Check if this is the same session
+        const currentSessionId = getSessionId();
+        if (parsedData.sessionId && parsedData.sessionId !== currentSessionId) {
+          // Different session - clear old data
+          clearFormData();
+          return null;
+        }
+        
         // Check if data is not too old (24 hours max)
         const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
         if (Date.now() - parsedData.timestamp > maxAge) {
@@ -68,27 +76,12 @@ export const useFormPersistence = () => {
 
   // Set up cleanup on tab/window close
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      clearFormData();
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        // Tab is being hidden/closed
-        clearFormData();
-      }
-    };
-
-    // Add event listeners
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    // Cleanup event listeners
+    // Only clear data when the component unmounts (not on page navigation)
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      // This cleanup runs when the component is unmounted
+      // We don't clear form data here to allow persistence across navigation
     };
-  }, [clearFormData]);
+  }, []);
 
   return {
     saveFormData,
