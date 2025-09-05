@@ -14,6 +14,17 @@ function HomePage() {
   const [showPrankModal, setShowPrankModal] = useState(false);
   const [hasRestoredForm, setHasRestoredForm] = useState(false);
 
+  const {
+    formData,
+    playingVoice,
+    isLaunching,
+    updateFormField,
+    updateCountry,
+    previewVoice,
+    launchPrank,
+    restoreFormData,
+    clearFormData,
+  } = usePrankForm();
 
 
   // -----------------------------------------------------------
@@ -96,18 +107,6 @@ function HomePage() {
   const handleCloseLogin = () => {
     setShowLogin(false);
   };
-
-  const {
-    formData,
-    playingVoice,
-    isLaunching,
-    updateFormField,
-    updateCountry,
-    previewVoice,
-    launchPrank,
-    restoreFormData,
-    clearFormData,
-  } = usePrankForm();
 
   const handleLaunchPrank = () => {
     launchPrank(() => {
